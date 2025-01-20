@@ -1,33 +1,44 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, ChangeEvent} from 'react';
 import './App.css';
 import CardList from './components/card-list/card-list.component';
 import SearchBox from './components/search-box/search-box.component';
+
+import { getData } from './utils/data.utils';
+
+export type Monster = {
+  id: string;
+  name: string;
+  email: string;
+}
 
 const App = () => {
 
   const [searchField, setSearchField] = useState('') //[value, setValue]
   const [title, setTitle] = useState('');
-  const [monsters, setMonsters] = useState([]);
+  const [monsters, setMonsters] = useState<Monster[]>([]);
 
   console.log('render');
 
   useEffect(()=> {
-    fetch("https://jsonplaceholder.typicode.com/users")
-        .then((response) => response.json())
-        .then((users) => setMonsters(users)
-      );
+
+
+    const fetchUsers = async () => {
+      const users = await getData<Array<Monster>>("https://jsonplaceholder.typicode.com/users");
+      setMonsters(users);
+    };
+    fetchUsers()
   },[]); //call back functon, dependencies most likely state or prop values.. when ever values change callback funtion runs
 
   
 
   
-  const onSearchChange = (event) => {
+  const onSearchChange = (event: ChangeEvent<HTMLInputElement >): void => {
 
       const searchFieldString = event.target.value.toLocaleLowerCase();    
       setSearchField(searchFieldString);    
       
      }
-     const onTitleChange = (event) => {
+     const onTitleChange = (event: ChangeEvent<HTMLInputElement >): void => {
 
       const searchFieldString = event.target.value.toLocaleLowerCase();    
       setTitle(searchFieldString);    
